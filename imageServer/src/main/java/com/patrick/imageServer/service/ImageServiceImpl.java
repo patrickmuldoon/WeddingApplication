@@ -1,6 +1,9 @@
 package com.patrick.imageServer.service;
 
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +30,10 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public void saveImage(Image image) {
-		this.imageDAO.save(image);
+	public Image saveImage(Image image) {
+		image.setTimePhotoUploaded(Timestamp.from(Instant.now()));
+		image.setLastUpdated(Timestamp.from(Instant.now()));
+		return this.imageDAO.save(image);
 	}
 
 	@Override

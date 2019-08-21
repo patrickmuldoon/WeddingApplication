@@ -27,4 +27,5 @@ public class HomeController {
 		else
 			return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
 	}
+	
 }
