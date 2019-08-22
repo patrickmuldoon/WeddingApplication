@@ -42,7 +42,7 @@ public class AlbumController {
 		}
 	}
 	
-	@PostMapping("/create")
+	@PostMapping("/admin/create")
 	public @ResponseBody ResponseEntity<Void> createNewPhotoAlbum(@Valid @RequestBody PhotoAlbumRequest request ){
 		//validate request if need be
 		if(request == null)
@@ -55,7 +55,8 @@ public class AlbumController {
 		return new ResponseEntity<Void>(HttpStatus.CREATED);
 	}
 	
-	@PostMapping("/{albumId}/addImage")
+	//consider adding @Valid to Image and making an ImageRequest
+	@PostMapping("/admin/{albumId}/addImage")
 	public @ResponseBody ResponseEntity<Void> addImageToPhotoAlbum(@Valid @PathVariable String albumId, Image image){
 		if(image == null)
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
@@ -66,7 +67,8 @@ public class AlbumController {
 		return new ResponseEntity<Void>(HttpStatus.CREATED);
 	}
 	
-	@PostMapping("/{albumId}/addImages")
+	//consider add @Valid to images and making an ImageListRequest
+	@PostMapping("/admin/{albumId}/addImages")
 	public @ResponseBody ResponseEntity<Void> addImagesToPhotoAlbum(@Valid @PathVariable String albumId, List<Image> images){
 		if(images == null)
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);

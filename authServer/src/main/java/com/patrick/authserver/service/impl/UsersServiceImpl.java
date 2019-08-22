@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.patrick.authserver.auth.beans.ChangePasswordRequest;
+import com.patrick.authserver.auth.beans.CurrentUser;
 import com.patrick.authserver.auth.beans.Users;
 import com.patrick.authserver.repository.UserRepository;
 import com.patrick.authserver.service.UsersService;
@@ -53,6 +55,7 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public void saveUser(Users user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setRole("USER");
 		userRepository.save(user);
 	}
 	
@@ -60,6 +63,22 @@ public class UsersServiceImpl implements UsersService {
 	public void deleteUser(long userId) {
 		userRepository.deleteById(userId);
 		return;
+	}
+
+	@Override
+	public boolean updateUserPassword(CurrentUser currentUser, ChangePasswordRequest changePasswordRequest) {
+		Users user = userRepository.findById(currentUser.getId()).orElse(null);
+		if(user == null)
+			return false;
+		else {
+			if(currentUser.getPassword().equals(passwordEncoder.encode(changePasswordRequest.getPassword())) && 
+					changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+				user.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
+				userRepository.save(user);
+				return true;
+			}else
+				return false;
+		}
 	}
 	
 }

@@ -3,6 +3,8 @@ package com.patrick.authserver.security;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
@@ -19,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.patrick.authserver.auth.beans.CurrentUser;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -58,14 +61,15 @@ public class JWTUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
-
+		
+		CurrentUser user = (CurrentUser)auth.getPrincipal();
+		Map<String, Object> claimsMap = constructClaims(user);
 		Long now = System.currentTimeMillis();
 		String token = Jwts.builder()
 			.setSubject(auth.getName())	
 			// Convert to list of strings. 
 			// This is important because it affects the way we get them back in the Gateway.
-			.claim("authorities", auth.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+			.addClaims(claimsMap)
 			.setIssuedAt(new Date(now))
 			.setExpiration(new Date(now + jwtConfig.getExpiration() * 1000))  // in milliseconds
 			.signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret().getBytes())
@@ -91,6 +95,15 @@ public class JWTUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	    public void setPassword(String password) {
 			this.password = password;
 		}
+	}
+	
+	private Map<String, Object> constructClaims(CurrentUser user){
+		Map<String, Object> claimsMap = new HashMap<String, Object>();
+		claimsMap.put("authorities", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+		claimsMap.put("email", user.getEmail());
+		claimsMap.put("userId", user.getId());
+		claimsMap.put("userProfile", user.getUsersProfile());
+		return claimsMap;
 	}
 	
 }

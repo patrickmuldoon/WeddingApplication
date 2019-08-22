@@ -21,8 +21,7 @@ public class JWTConfig {
 
 	    @Value("${security.jwt.secret:JwtSecretKey}")
 	    private String secret;
-
-
+	    
 		public String getUri() {
 			return Uri;
 		}

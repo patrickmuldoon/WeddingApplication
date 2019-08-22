@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.patrick.authserver.auth.beans.CurrentUser;
 import com.patrick.authserver.auth.beans.Users;
 import com.patrick.authserver.repository.UserRepository;
 import com.patrick.authserver.service.UsersService;
@@ -30,7 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         }
 		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
             	.commaSeparatedStringToAuthorityList("ROLE_" + user.getRole());
-		return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
+		return new CurrentUser(user.getUsername(), user.getPassword(), grantedAuthorities, user.getEmail(), user.getId(), user.getUsersProfile());
 
 	}
 
