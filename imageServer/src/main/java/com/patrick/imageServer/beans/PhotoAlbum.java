@@ -27,7 +27,7 @@ public class PhotoAlbum {
 	@SequenceGenerator(name="PHOTO_ALBUM_ID_SEQUENCE", sequenceName="PHOTO_ALBUM_ID_SEQUENCE")
     private long id;
 	
-	@OneToMany(mappedBy="photoAlbum", cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="photoAlbum", cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Image> images;
 	
@@ -43,6 +43,10 @@ public class PhotoAlbum {
 	@Column(nullable=true, name="DESCRIPTION")
 	private String description;
 	
+	public PhotoAlbum() {
+		super();
+	}
+
 	public PhotoAlbum(long id, List<Image> images, String albumName, Timestamp dateCreated, Timestamp lastUpdated,
 			String description) {
 		super();

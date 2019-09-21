@@ -1,13 +1,19 @@
 package com.patrick.imageServer.service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.patrick.imageServer.DAO.AlbumDAO;
 import com.patrick.imageServer.beans.Image;
 import com.patrick.imageServer.beans.PhotoAlbum;
 
+@Service
 public class AlbumServiceImpl implements AlbumService {
 	
 	@Autowired
@@ -23,6 +29,8 @@ public class AlbumServiceImpl implements AlbumService {
 
 	@Override
 	public void createPhotoAlbum(PhotoAlbum photoAlbum) {
+		photoAlbum.setDateCreated(Timestamp.valueOf(LocalDateTime.now()));
+		photoAlbum.setLastUpdated(Timestamp.valueOf(LocalDateTime.now()));
 		albumDAO.save(photoAlbum);
 	}
 

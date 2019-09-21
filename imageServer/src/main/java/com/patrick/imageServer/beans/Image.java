@@ -14,6 +14,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Image {
 	
@@ -39,8 +41,13 @@ public class Image {
 	@Column(name="DESCRIPTION")
 	private String description;
 	
+	@JsonIgnore
 	@ManyToOne(cascade=CascadeType.DETACH, fetch=FetchType.LAZY)
 	private PhotoAlbum photoAlbum;
+	
+	public Image() {
+		super();
+	}
 
 	public Image(long photoId, byte[] image, String title, Timestamp timePhotoUploaded, Timestamp lastUpdated,
 			String description, PhotoAlbum photoAlbum) {
@@ -110,7 +117,7 @@ public class Image {
 		this.description = description;
 	}
 	
-	static class ImageBuilder {
+	public static class ImageBuilder {
 		
 		public int photoId;
 		public byte[] image;

@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -41,6 +42,7 @@ public class JWTUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
+		
 		try {
 			
 			// 1. Get credentials from request
@@ -61,7 +63,7 @@ public class JWTUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
-		
+		System.out.println("Auth is : " + auth.isAuthenticated());
 		CurrentUser user = (CurrentUser)auth.getPrincipal();
 		Map<String, Object> claimsMap = constructClaims(user);
 		Long now = System.currentTimeMillis();
@@ -76,6 +78,8 @@ public class JWTUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 			.compact();
 		// Add token to header
 		response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
+		//super.successfulAuthentication(request, response, chain, auth);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 	
 	// A (temporary) class just to represent the user credentials
